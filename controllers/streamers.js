@@ -8,21 +8,45 @@ const getStreamer = async (req, res) => {
   if (!streamer) {
     throw new NotFoundError(`No streamer with id ${req.params.id}`);
   }
-  res.status(StatusCodes.OK).json({ streamer });
+  res.status(StatusCodes.OK).json(streamer);
 };
 
 const getStreamers = async (req, res) => {
   const streamers = await Streamer.find({});
-  res.status(StatusCodes.OK).json({ streamers });
+  res.status(StatusCodes.OK).json(streamers);
 };
 
 const createStreamer = async (req, res) => {
   const streamer = await Streamer.create(req.body);
-  res.status(StatusCodes.CREATED).json({ streamer });
+  res.status(StatusCodes.CREATED).json(streamer);
 };
 
-// const updateStreamerVote = async (req, res) => {
-//     await
-// }
+const updateStreamerVote = async (req, res) => {
+  const { vote, isIncrement } = req.body;
+  const voteType = vote === "downvote" ? "downvotes" : "upvotes";
 
-module.exports = { getStreamer, getStreamers, createStreamer };
+  const streamer = await Streamer.findOneAndUpdate(
+    { _id: req.params.id },
+    {
+      $inc: {
+        [voteType]: isIncrement ? 1 : -1,
+      },
+    },
+    {
+      new: true,
+    }
+  );
+
+  if (!streamer) {
+    throw new NotFoundError(`No streamer with id ${req.params.id}`);
+  }
+
+  res.status(StatusCodes.CREATED).json(streamer);
+};
+
+module.exports = {
+  getStreamer,
+  getStreamers,
+  createStreamer,
+  updateStreamerVote,
+};
