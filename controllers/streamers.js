@@ -22,14 +22,14 @@ const createStreamer = async (req, res) => {
 };
 
 const updateStreamerVote = async (req, res) => {
-  const { vote, isIncrement } = req.body;
+  const { vote } = req.body;
   const voteType = vote === "downvote" ? "downvotes" : "upvotes";
 
   const streamer = await Streamer.findOneAndUpdate(
     { _id: req.params.id },
     {
       $inc: {
-        [voteType]: isIncrement ? 1 : -1,
+        [voteType]: 1,
       },
     },
     {
