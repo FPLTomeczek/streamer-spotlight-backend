@@ -1,12 +1,12 @@
 const Streamer = require("../models/Streamer");
 const { StatusCodes } = require("http-status-codes");
-const NotFoundError = require("../errors/not-found");
+const { NotFoundError, BadRequestError } = require("../errors");
 
 const getStreamer = async (req, res) => {
   const streamer = await Streamer.findOne({ _id: req.params.id });
 
   if (!streamer) {
-    throw new NotFoundError(`No streamer with id ${req.params.id}`);
+    throw new NotFoundError(`No streamer found with id:${req.params.id}`);
   }
   res.status(StatusCodes.OK).json(streamer);
 };
@@ -17,8 +17,12 @@ const getStreamers = async (req, res) => {
 };
 
 const createStreamer = async (req, res) => {
-  const streamer = await Streamer.create(req.body);
-  res.status(StatusCodes.CREATED).json(streamer);
+  try {
+    const streamer = await Streamer.create(req.body);
+    res.status(StatusCodes.CREATED).json(streamer);
+  } catch (error) {
+    throw new BadRequestError(error.message);
+  }
 };
 
 const updateStreamerVote = async (req, res) => {
@@ -38,7 +42,7 @@ const updateStreamerVote = async (req, res) => {
   );
 
   if (!streamer) {
-    throw new NotFoundError(`No streamer with id ${req.params.id}`);
+    throw new NotFoundError(`No streamer found with id:${req.params.id}`);
   }
 
   res.status(StatusCodes.CREATED).json(streamer);
