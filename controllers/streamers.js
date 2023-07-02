@@ -25,15 +25,22 @@ const createStreamer = async (req, res) => {
   }
 };
 
+const votes = {
+  UPVOTE: "upvote",
+  DOWNVOTE: "downvote",
+};
+
 const updateStreamerVote = async (req, res) => {
   const { vote } = req.body;
-  const voteType = vote === "downvote" ? "downvotes" : "upvotes";
 
+  if (vote !== votes.DOWNVOTE && vote !== votes.UPVOTE) {
+    throw new BadRequestError("Incorrect vote");
+  }
   const streamer = await Streamer.findOneAndUpdate(
     { _id: req.params.id },
     {
       $inc: {
-        [voteType]: 1,
+        [vote]: 1,
       },
     },
     {

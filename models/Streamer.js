@@ -31,11 +31,11 @@ const StreamerSchema = new mongoose.Schema({
     required: [true, "Please provide a streamer description"],
     match: noWhitespaceRegex,
   },
-  upvotes: {
+  upvote: {
     type: Number,
     default: 0,
   },
-  downvotes: {
+  downvote: {
     type: Number,
     default: 0,
   },
